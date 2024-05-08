@@ -49,7 +49,7 @@ const Register = () => {
           hasVoted: "false",
         });
         console.log("Data Added Successfully");
-        // navigate('/');
+        navigate('/');
     }
 };
 

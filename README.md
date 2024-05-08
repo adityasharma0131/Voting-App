@@ -22,11 +22,8 @@ To use the system, follow these steps:
 
 ## Demo
 
-Check out the demo video below:
+Check out the demo video [here](src/assets/Recording%202024-05-08%20203626.mp4).
 
-<video width="320" height="240" controls>
-  <source src="src/assets/Recording 2024-05-08 203626.mp4" type="video/mp4">
-</video>
 
 ## Contributing
 

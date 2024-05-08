@@ -22,18 +22,12 @@ const VotingPanel = () => {
 
     // Retrieve data from localStorage
     const storedCandidates = localStorage.getItem("Candidates");
-    // Parse the retrieved data if it exists
-    const parsedCandidates = storedCandidates
-      ? JSON.parse(storedCandidates)
-      : [];
-    // Update the state with the retrieved candidates
+    const parsedCandidates = storedCandidates ? JSON.parse(storedCandidates) : [];
     setCandidates(parsedCandidates);
 
     // Retrieve registeredUsers from localStorage
     const storedRegisteredUsers = localStorage.getItem("registeredUsers");
-    const parsedRegisteredUsers = storedRegisteredUsers
-      ? JSON.parse(storedRegisteredUsers)
-      : [];
+    const parsedRegisteredUsers = storedRegisteredUsers ? JSON.parse(storedRegisteredUsers) : [];
     setRegisteredUsers(parsedRegisteredUsers);
   }, [location.state]);
 
@@ -44,7 +38,7 @@ const VotingPanel = () => {
 
   const addData = (e) => {
     e.preventDefault();
-    const selectedCandidateIndex = parseInt(inpval.vote); // Get the index of the selected candidate
+    const selectedCandidateIndex = parseInt(inpval.vote);
     if (
       isNaN(selectedCandidateIndex) ||
       selectedCandidateIndex < 0 ||
@@ -52,7 +46,6 @@ const VotingPanel = () => {
     ) {
       alert("Please select a valid candidate!");
     } else {
-      // Update the vote count of the selected candidate
       const updatedCandidates = candidates.map((candidate, index) => {
         if (index === selectedCandidateIndex) {
           return {
@@ -62,29 +55,25 @@ const VotingPanel = () => {
         }
         return candidate;
       });
-      localStorage.setItem("Candidates", JSON.stringify(updatedCandidates)); // Update the candidates data in localStorage
-      setCandidates(updatedCandidates); // Update the state with the updated candidates
+      localStorage.setItem("Candidates", JSON.stringify(updatedCandidates));
+      setCandidates(updatedCandidates);
 
-      // Update hasVoted in registeredUsers
       const updatedRegisteredUsers = registeredUsers.map((user) => {
         if (user.name === userExists.name) {
           return { ...user, hasVoted: "true" };
         }
         return user;
       });
-      localStorage.setItem(
-        "registeredUsers",
-        JSON.stringify(updatedRegisteredUsers)
-      );
+      localStorage.setItem("registeredUsers", JSON.stringify(updatedRegisteredUsers));
       setRegisteredUsers(updatedRegisteredUsers);
-      alert("Vote submitted successfully!");
-      navigate("/");
 
+      setUserExists({ ...userExists, hasVoted: "true" }); // Update userExists state
+      alert("Vote submitted successfully!");
     }
   };
 
   return (
-    <div className="container py-4">
+    <div className="container py-4 ">
       {userExists ? (
         <div className="text-center">
           <Form>
@@ -108,21 +97,21 @@ const VotingPanel = () => {
                   <tbody>
                     {candidates.map((candidate, index) => (
                       <tr key={index}>
+                        <td className="bg-warning text-dark">{candidate.name}</td>
+                        <td className="bg-warning text-dark">{candidate.party}</td>
                         <td className="bg-warning text-dark">
-                          {candidate.name}
-                        </td>
-                        <td className="bg-warning text-dark">
-                          {candidate.party}
-                        </td>
-                        <td className="bg-warning text-dark">
-                          <Form.Check
-                            type="radio"
-                            name="vote"
-                            value={index.toString()} // Set the value to the index of the candidate
-                            onChange={(e) =>
-                              setInpval({ ...inpval, vote: e.target.value })
-                            }
-                          />
+                          {!userExists.hasVoted || userExists.hasVoted === "false" ? (
+                            <Form.Check
+                              type="radio"
+                              name="vote"
+                              value={index.toString()}
+                              onChange={(e) =>
+                                setInpval({ ...inpval, vote: e.target.value })
+                              }
+                            />
+                          ) : (
+                            <Form.Check type="radio" disabled />
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -130,14 +119,13 @@ const VotingPanel = () => {
                 </Table>
               </div>
               <div className="d-flex justify-content-end m-2">
-                {/* Render the submit button conditionally based on hasVoted status */}
                 {!userExists.hasVoted || userExists.hasVoted === "false" ? (
-                  <Button variant="success" onClick={addData}>
+                  <Button className="mr-2" variant="success" onClick={addData}>
                     Submit
                   </Button>
                 ) : (
-                  <Button variant="success" disabled>
-                    Already Voted
+                  <Button className="mr-2" variant="success" disabled>
+                    You Have Already Voted
                   </Button>
                 )}
               </div>

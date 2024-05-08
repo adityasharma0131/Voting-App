@@ -32,6 +32,7 @@ const AdminPanel = () => {
     navigate("/AddCan", { state: { userExists } });
   };
 
+
   return (
     <div className="container py-4">
       {userExists ? (
@@ -74,9 +75,7 @@ const AdminPanel = () => {
               {/* <Button variant="primary">
                             <NavLink to='/AddCan'>Add Candidate</NavLink>
                         </Button> */}
-              <Button variant="primary" onClick={AddCan}>
-                Add Candidate
-              </Button>
+              <Button variant="primary" onClick={AddCan} >Add Candidate</Button>
             </div>
           </div>
         </div>
@@ -88,5 +87,10 @@ const AdminPanel = () => {
     </div>
   );
 };
+
+
+
+
+
 
 export default AdminPanel;

@@ -17,9 +17,7 @@ const AddCan = () => {
 
     // Retrieve candidates data from localStorage
     const storedCandidates = localStorage.getItem("Candidates");
-    const parsedCandidates = storedCandidates
-      ? JSON.parse(storedCandidates)
-      : [];
+    const parsedCandidates = storedCandidates ? JSON.parse(storedCandidates) : [];
     setCandidates(parsedCandidates);
   }, [location.state]);
 
@@ -28,11 +26,6 @@ const AddCan = () => {
     name: "",
     party: "",
     votes: 0,
-  });
-
-  const [data, setData] = useState(() => {
-    const storedData = localStorage.getItem("Candidates");
-    return storedData ? JSON.parse(storedData) : [];
   });
 
   useEffect(() => {
@@ -61,9 +54,7 @@ const AddCan = () => {
       alert("All fields are required");
     } else {
       const newUser = { name, party, votes, category };
-      const updatedData = [...data, newUser];
-      localStorage.setItem("Candidates", JSON.stringify(updatedData));
-      setData(updatedData);
+      setCandidates([...candidates, newUser]);
       setInpval({
         category: "",
         name: "",
@@ -71,12 +62,18 @@ const AddCan = () => {
         votes: 0,
       });
       console.log("Candidate Added Successfully");
-      window.location.reload();
+      // Save updated candidates data to localStorage
+      localStorage.setItem("Candidates", JSON.stringify([...candidates, newUser]));
     }
   };
 
   const Back = () => {
     navigate("/AdminPannel", { state: { userExists } });
+  };
+
+  // Function to filter candidates by category
+  const filterCandidatesByCategory = (category) => {
+    return candidates.filter((candidate) => candidate.category === category);
   };
 
   return (
@@ -191,47 +188,41 @@ const AddCan = () => {
       </div>
 
       <div className="container py-4 pb-3">
-  {userExists ? (
-    <div className="text-center">
-      {candidates.map((candidate, index) => (
-        <div key={index} className="card">
-          <div className="d-flex justify-content-end m-2"></div>
-          <div className="card-body">
-            <h5 className="card-title">{candidate.category}</h5>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th className="bg-dark text-warning">Category</th>
-                  <th className="bg-dark text-warning">Candidate</th>
-                  <th className="bg-dark text-warning">Country</th>
-                  <th className="bg-dark text-warning">Votes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="bg-warning text-dark">{candidate.category}</td>
-                  <td className="bg-warning text-dark">{candidate.name}</td>
-                  <td className="bg-warning text-dark">{candidate.party}</td>
-                  <td className="bg-warning text-dark">{candidate.votes}</td>
-                </tr>
-              </tbody>
-            </Table>
+        {userExists ? (
+          <div className="text-center">
+            <h3>Candidates</h3>
+            {/* Mapping through unique categories */}
+            {['option1', 'option2', 'option3'].map((category, index) => (
+              <div key={index}>
+                <h4>{category}</h4>
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th className="bg-dark text-warning">Candidate</th>
+                      <th className="bg-dark text-warning">Country</th>
+                      <th className="bg-dark text-warning">Votes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Filtering candidates by category */}
+                    {filterCandidatesByCategory(category).map((candidate, index) => (
+                      <tr key={index}>
+                        <td className="bg-warning text-dark">{candidate.name}</td>
+                        <td className="bg-warning text-dark">{candidate.party}</td>
+                        <td className="bg-warning text-dark">{candidate.votes}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            ))}
           </div>
-          <div className="d-flex justify-content-end m-2">
-            {/* <Button variant="primary">
-                  <NavLink to='/AddCan'>Add Candidate</NavLink>
-              </Button> */}
+        ) : (
+          <div className="text-center">
+            <p>Please Login</p>
           </div>
-        </div>
-      ))}
-    </div>
-  ) : (
-    <div className="text-center">
-      <p>Please Login</p>
-    </div>
-  )}
-</div>
-
+        )}
+      </div>
     </>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
-import { NavLink } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const AdminPanel = () => {
@@ -17,9 +16,7 @@ const AdminPanel = () => {
 
     // Retrieve candidates data from localStorage
     const storedCandidates = localStorage.getItem("Candidates");
-    const parsedCandidates = storedCandidates
-      ? JSON.parse(storedCandidates)
-      : [];
+    const parsedCandidates = storedCandidates ? JSON.parse(storedCandidates) : [];
     setCandidates(parsedCandidates);
   }, [location.state]);
 
@@ -32,117 +29,64 @@ const AdminPanel = () => {
     navigate("/AddCan", { state: { userExists } });
   };
 
+  // Function to group candidates by category
+  const groupCandidatesByCategory = () => {
+    const groupedCandidates = {};
+    candidates.forEach(candidate => {
+      if (!groupedCandidates[candidate.category]) {
+        groupedCandidates[candidate.category] = [];
+      }
+      groupedCandidates[candidate.category].push(candidate);
+    });
+    return groupedCandidates;
+  };
 
   return (
-    // <div className="container py-4">
-    //   {userExists ? (
-    //     <div className="text-center">
-    //       <h2 className="mb-4">
-    //         Welcome to the Admin Panel, {userExists.name}!
-    //       </h2>
-    //       <div className="card">
-    //         <div className="d-flex justify-content-end m-2">
-    //           <Button variant="danger" onClick={handleLogout}>
-    //             Logout
-    //           </Button>
-    //         </div>
-    //         <div className="card-body">
-    //           <h3 className="card-title">Admin Panel</h3>
-    //           <Table striped bordered hover>
-    //             <thead>
-    //               <tr>
-    //                 <th className="bg-dark text-warning">Candidate</th>
-    //                 <th className="bg-dark text-warning">Party</th>
-    //                 <th className="bg-dark text-warning">Votes</th>
-    //               </tr>
-    //             </thead>
-    //             <tbody>
-    //               {candidates.map((candidate, index) => (
-    //                 <tr key={index}>
-    //                   <td className="bg-warning text-dark">{candidate.name}</td>
-    //                   <td className="bg-warning text-dark">
-    //                     {candidate.party}
-    //                   </td>
-    //                   <td className="bg-warning text-dark">
-    //                     {candidate.votes}
-    //                   </td>
-    //                 </tr>
-    //               ))}
-    //             </tbody>
-    //           </Table>
-    //         </div>
-    //         <div className="d-flex justify-content-end m-2">
-    //           {/* <Button variant="primary">
-    //                         <NavLink to='/AddCan'>Add Candidate</NavLink>
-    //                     </Button> */}
-    //           <Button variant="primary" onClick={AddCan} >Add Candidate</Button>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   ) : (
-    //     <div className="text-center">
-    //       <p>Please Login</p>
-    //     </div>
-    //   )}
-    // </div>
-
-
     <div className="container py-4 pb-3">
-  {userExists ? (
-    <div className="text-center">
-      <h2 className="mb-4">
-        Welcome to the Admin Panel, {userExists.name}!
-      </h2>
-      <div className="d-flex justify-content-end m-2">
-        <Button variant="danger" onClick={handleLogout}>
-          Logout
-        </Button>
-      </div>
-      {candidates.map((candidate, index) => (
-        <div key={index} className="card">
-          <div className="card-body">
-            <h5 className="card-title">{candidate.category}</h5>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th className="bg-dark text-warning">Category</th>
-                  <th className="bg-dark text-warning">Candidate</th>
-                  <th className="bg-dark text-warning">Country</th>
-                  <th className="bg-dark text-warning">Votes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="bg-warning text-dark">{candidate.category}</td>
-                  <td className="bg-warning text-dark">{candidate.name}</td>
-                  <td className="bg-warning text-dark">{candidate.party}</td>
-                  <td className="bg-warning text-dark">{candidate.votes}</td>
-                </tr>
-              </tbody>
-            </Table>
+      {userExists ? (
+        <div className="text-center">
+          <h2 className="mb-4">
+            Welcome to the Admin Panel, {userExists.name}!
+          </h2>
+          <div className="d-flex justify-content-end m-2">
+            <Button variant="danger" onClick={handleLogout}>
+              Logout
+            </Button>
+          </div>
+          {Object.entries(groupCandidatesByCategory()).map(([category, categoryCandidates]) => (
+            <div key={category}>
+              <h3>{category}</h3>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th className="bg-dark text-warning">Candidate</th>
+                    <th className="bg-dark text-warning">Country</th>
+                    <th className="bg-dark text-warning">Votes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categoryCandidates.map((candidate, index) => (
+                    <tr key={index}>
+                      <td className="bg-warning text-dark">{candidate.name}</td>
+                      <td className="bg-warning text-dark">{candidate.party}</td>
+                      <td className="bg-warning text-dark">{candidate.votes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          ))}
+          <div className="d-flex justify-content-end m-2">
+            <Button variant="primary" onClick={AddCan}>Add Candidate</Button>
           </div>
         </div>
-      ))}
+      ) : (
+        <div className="text-center">
+          <p>Please Login</p>
+        </div>
+      )}
     </div>
-  ) : (
-    <div className="text-center">
-      <p>Please Login</p>
-    </div>
-  )}
-          <div className="d-flex justify-content-end m-2">
-            {/* <Button variant="primary">
-                  <NavLink to='/AddCan'>Add Candidate</NavLink>
-              </Button> */}
-          <Button variant="primary" onClick={AddCan} >Add Candidate</Button>
-          </div>
-</div>
-
   );
 };
-
-
-
-
-
 
 export default AdminPanel;

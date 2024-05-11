@@ -24,6 +24,7 @@ const AddCan = () => {
   }, [location.state]);
 
   const [inpval, setInpval] = useState({
+    category: "",
     name: "",
     party: "",
     votes: 0,
@@ -55,15 +56,16 @@ const AddCan = () => {
 
   const addData = (e) => {
     e.preventDefault();
-    const { name, party, votes } = inpval;
-    if (name === "" || party === "") {
+    const { name, party, votes, category } = inpval;
+    if (name === "" || party === "" || category === "") {
       alert("All fields are required");
     } else {
-      const newUser = { name, party, votes };
+      const newUser = { name, party, votes, category };
       const updatedData = [...data, newUser];
       localStorage.setItem("Candidates", JSON.stringify(updatedData));
       setData(updatedData);
       setInpval({
+        category: "",
         name: "",
         party: "",
         votes: 0,
@@ -104,13 +106,36 @@ const AddCan = () => {
                   <Table striped bordered hover>
                     <thead>
                       <tr>
+                        <th className="bg-dark text-warning">Category</th>
                         <th className="bg-dark text-warning">Candidate</th>
-                        <th className="bg-dark text-warning">Party</th>
+                        <th className="bg-dark text-warning">Country</th>
                         <th className="bg-dark text-warning">Add</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
+                        <td className="bg-dark text-warning">
+                          <Form.Group
+                            className="mb-3"
+                            controlId="formBasicCCat"
+                          >
+                            <Form.Label>Candidate Category:</Form.Label>
+                            <Form.Select
+                              name="category"
+                              className="bg-dark text-warning"
+                              value={inpval.category}
+                              onChange={getdata}
+                            >
+                              <option value="" disabled>
+                                Select Category
+                              </option>
+                              <option value="option1">Option 1</option>
+                              <option value="option2">Option 2</option>
+                              <option value="option3">Option 3</option>
+                            </Form.Select>
+                          </Form.Group>
+                        </td>
+
                         <td className="bg-dark text-warning">
                           <Form.Group
                             className="mb-3"
@@ -132,14 +157,14 @@ const AddCan = () => {
                             className="mb-3"
                             controlId="formBasicPName"
                           >
-                            <Form.Label>Party name:</Form.Label>
+                            <Form.Label>Country name:</Form.Label>
                             <Form.Control
                               name="party"
                               value={inpval.party}
                               onChange={getdata}
                               className="text-warning"
                               type="text"
-                              placeholder="Enter Party Name"
+                              placeholder="Enter Country Name"
                             />
                           </Form.Group>
                         </td>
@@ -165,51 +190,48 @@ const AddCan = () => {
         )}
       </div>
 
-      <div className="container py-4">
-        {userExists ? (
-          <div className="text-center">
-            <div className="card">
-              <div className="d-flex justify-content-end m-2"></div>
-              <div className="card-body">
-                <h3 className="card-title">Candidate List</h3>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th className="bg-dark text-warning">Candidate</th>
-                      <th className="bg-dark text-warning">Party</th>
-                      <th className="bg-dark text-warning">Votes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {candidates.map((candidate, index) => (
-                      <tr key={index}>
-                        <td className="bg-warning text-dark">
-                          {candidate.name}
-                        </td>
-                        <td className="bg-warning text-dark">
-                          {candidate.party}
-                        </td>
-                        <td className="bg-warning text-dark">
-                          {candidate.votes}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-              <div className="d-flex justify-content-end m-2">
-                {/* <Button variant="primary">
-                      <NavLink to='/AddCan'>Add Candidate</NavLink>
-                  </Button> */}
-              </div>
-            </div>
+      <div className="container py-4 pb-3">
+  {userExists ? (
+    <div className="text-center">
+      {candidates.map((candidate, index) => (
+        <div key={index} className="card">
+          <div className="d-flex justify-content-end m-2"></div>
+          <div className="card-body">
+            <h5 className="card-title">{candidate.category}</h5>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th className="bg-dark text-warning">Category</th>
+                  <th className="bg-dark text-warning">Candidate</th>
+                  <th className="bg-dark text-warning">Country</th>
+                  <th className="bg-dark text-warning">Votes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="bg-warning text-dark">{candidate.category}</td>
+                  <td className="bg-warning text-dark">{candidate.name}</td>
+                  <td className="bg-warning text-dark">{candidate.party}</td>
+                  <td className="bg-warning text-dark">{candidate.votes}</td>
+                </tr>
+              </tbody>
+            </Table>
           </div>
-        ) : (
-          <div className="text-center">
-            <p>Please Login</p>
+          <div className="d-flex justify-content-end m-2">
+            {/* <Button variant="primary">
+                  <NavLink to='/AddCan'>Add Candidate</NavLink>
+              </Button> */}
           </div>
-        )}
-      </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div className="text-center">
+      <p>Please Login</p>
+    </div>
+  )}
+</div>
+
     </>
   );
 };

@@ -77,7 +77,7 @@ const Home = () => {
             />
           </Form.Group>
 
-          <Button variant="warning" onClick={addData} type="submit">
+          <Button variant="dark" onClick={addData} type="submit">
             Submit
           </Button>
         </Form>
